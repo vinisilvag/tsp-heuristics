@@ -1,18 +1,17 @@
-use std::time::Instant;
-
-use petgraph::Graph;
+use std::time::{Duration, Instant};
 
 mod args;
-mod solver;
+mod solvers;
 
 fn main() {
-    let graph: Graph<usize, f32, petgraph::Undirected> = args::read_args();
+    let (distances, graph) = args::read_args();
 
-    let start = Instant::now();
+    let start: Instant = Instant::now();
 
-    solver::christofides(graph);
+    let solution = solvers::christofides(distances, graph);
 
-    let duration = start.elapsed();
+    let duration: Duration = start.elapsed();
 
+    println!("Solution: {}", solution);
     println!("Duration: {:?}", duration);
 }

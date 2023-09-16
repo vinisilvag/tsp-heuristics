@@ -58,7 +58,7 @@ fn euclidean(p0: (f32, f32), p1: (f32, f32)) -> f32 {
     ((x * x) + (y * y)).sqrt()
 }
 
-pub fn read_args() -> Graph<usize, f32, petgraph::Undirected> {
+pub fn read_args() -> (Vec<Vec<f32>>, Graph<usize, f32, petgraph::Undirected>) {
     let args = Arguments::parse();
 
     let contents: String = open_file(args.path);
@@ -78,21 +78,22 @@ pub fn read_args() -> Graph<usize, f32, petgraph::Undirected> {
 
     let mut graph = Graph::<usize, f32, petgraph::Undirected>::new_undirected();
 
+    let mut distances = vec![vec![-1.0f32; size]; size];
+
     for i in 0..size {
         graph.add_node(i);
     }
 
-    // remove duplicates
     for i in 0..size {
-        for j in 0..size {
-            if i == j {
-                continue;
-            } else {
-                let distance = euclidean(coords[i], coords[j]);
-                graph.add_edge(NodeIndex::new(i), NodeIndex::new(j), distance);
-            }
+        for j in 0..i {
+            let distance = euclidean(coords[i], coords[j]);
+
+            distances[i][j] = distance;
+            distances[j][i] = distance;
+
+            graph.add_edge(NodeIndex::new(i), NodeIndex::new(j), distances[i][j]);
         }
     }
 
-    graph
+    (distances, graph)
 }
