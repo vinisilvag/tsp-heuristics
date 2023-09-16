@@ -1,14 +1,14 @@
-use std::time::{Duration, Instant};
-
+mod algorithms;
 mod args;
-mod solvers;
+
+use std::time::{Duration, Instant};
 
 fn main() {
     let (distances, graph) = args::read_args();
 
     let start: Instant = Instant::now();
 
-    let solution = solvers::christofides(distances, graph);
+    let solution = algorithms::twice_around_the_tree(distances, graph);
 
     let duration: Duration = start.elapsed();
 
