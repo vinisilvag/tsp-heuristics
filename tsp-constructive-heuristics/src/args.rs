@@ -76,30 +76,20 @@ pub fn read_args() -> Graph<usize, f32, petgraph::Undirected> {
         coords.push((x, y));
     }
 
-    let mut distances = vec![vec![0f32; size]; size];
-
-    for i in 0..size {
-        for j in 0..size {
-            if i == j {
-                distances[i][j] = -1.0;
-            } else {
-                distances[i][j] = euclidean(coords[i], coords[j]);
-            }
-        }
-    }
-
     let mut graph = Graph::<usize, f32, petgraph::Undirected>::new_undirected();
 
     for i in 0..size {
         graph.add_node(i);
     }
 
+    // remove duplicates
     for i in 0..size {
         for j in 0..size {
             if i == j {
                 continue;
             } else {
-                graph.add_edge(NodeIndex::new(i), NodeIndex::new(j), distances[i][j]);
+                let distance = euclidean(coords[i], coords[j]);
+                graph.add_edge(NodeIndex::new(i), NodeIndex::new(j), distance);
             }
         }
     }
