@@ -5,6 +5,9 @@ use std::io::prelude::*;
 
 use regex::Regex;
 
+use petgraph::graph::NodeIndex;
+use petgraph::Graph;
+
 #[derive(Parser, Default, Debug)]
 #[command(
     author = "Vinicius Gomes",
@@ -55,7 +58,7 @@ fn euclidean(p0: (f32, f32), p1: (f32, f32)) -> f32 {
     ((x * x) + (y * y)).sqrt()
 }
 
-pub fn read_args() -> Vec<Vec<f32>> {
+pub fn read_args() -> Graph<usize, f32, petgraph::Undirected> {
     let args = Arguments::parse();
 
     let contents: String = open_file(args.path);
@@ -78,12 +81,28 @@ pub fn read_args() -> Vec<Vec<f32>> {
     for i in 0..size {
         for j in 0..size {
             if i == j {
-                distances[i][j] = -1.0
+                distances[i][j] = -1.0;
             } else {
                 distances[i][j] = euclidean(coords[i], coords[j]);
             }
         }
     }
 
-    distances
+    let mut graph = Graph::<usize, f32, petgraph::Undirected>::new_undirected();
+
+    for i in 0..size {
+        graph.add_node(i);
+    }
+
+    for i in 0..size {
+        for j in 0..size {
+            if i == j {
+                continue;
+            } else {
+                graph.add_edge(NodeIndex::new(i), NodeIndex::new(j), distances[i][j]);
+            }
+        }
+    }
+
+    graph
 }
