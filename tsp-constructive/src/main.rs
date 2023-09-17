@@ -17,8 +17,6 @@ fn main() {
 
     let duration: Duration = start.elapsed();
 
-    // write a CSV file with algorithm, cost and duration
-
     println!("Cost: {}", cost);
     println!("Duration: {:?}", duration);
 }
