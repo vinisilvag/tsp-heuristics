@@ -95,10 +95,12 @@ pub fn read_args() -> (
 
     let mut distances = vec![vec![-1.0f32; size]; size];
 
+    // O(V)
     for i in 0..size {
         graph.add_node(i);
     }
 
+    // O(E)
     for i in 0..size {
         for j in 0..i {
             let distance = euclidean(coords[i], coords[j]);

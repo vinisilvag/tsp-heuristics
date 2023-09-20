@@ -3,13 +3,13 @@
 instances=`ls ./instances/*.tsp`
 declare -a algorithms=("twice-around-the-tree") #"christofides")
 
-# compile and create an optimized binary
+# compiles and creates an optimized binary
 cargo build --release
 
-# iterate trhough the algorithms that were implemented
+# iterates through each implemented algorithm
 for algo in "${algorithms[@]}"; do
-  echo "----- $algo -----"
-  # execute each algorithm for every instance
+  echo "######## $algo ########"
+  # runs each algorithm for each problem instance
   for instance in $instances; do
     echo $instance
     ./target/release/tsp-constructive -a $algo -p "$instance"

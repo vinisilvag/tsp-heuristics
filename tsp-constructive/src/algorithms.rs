@@ -1,15 +1,13 @@
-use petgraph::Graph;
-
 use petgraph::algo::{maximum_matching, min_spanning_tree};
 use petgraph::data::FromElements;
 use petgraph::dot::Dot;
-use petgraph::graph::{NodeIndex, UnGraph};
+use petgraph::graph::{Graph, NodeIndex, UnGraph};
 use petgraph::visit::Dfs;
 
 pub fn twice_around_the_tree(
     distances: Vec<Vec<f32>>,
     graph: Graph<usize, f32, petgraph::Undirected>,
-) -> f32 {
+) -> (Vec<usize>, f32) {
     let mst = UnGraph::<_, _>::from_elements(min_spanning_tree(&graph));
 
     let mut path: Vec<usize> = Vec::new();
@@ -27,13 +25,13 @@ pub fn twice_around_the_tree(
         cost += distances[path[i]][path[i + 1]];
     }
 
-    cost
+    (path, cost)
 }
 
 pub fn christofides(
     distances: Vec<Vec<f32>>,
     graph: Graph<usize, f32, petgraph::Undirected>,
-) -> f32 {
+) -> (Vec<usize>, f32) {
     let mut mst = UnGraph::<_, _>::from_elements(min_spanning_tree(&graph));
 
     let mut odd_nodes: Vec<NodeIndex> = Vec::new();
@@ -79,7 +77,7 @@ pub fn christofides(
 
     println!("{:?}", Dot::new(&mst));
 
-    // let mut path: Vec<usize> = Vec::new();
+    let mut path: Vec<usize> = Vec::new();
 
     // let mut dfs = Dfs::new(&mst, NodeIndex::new(0));
     // while let Some(visited) = dfs.next(&mst) {
@@ -96,5 +94,5 @@ pub fn christofides(
 
     // cost
 
-    -1.0
+    (path, -1.0)
 }

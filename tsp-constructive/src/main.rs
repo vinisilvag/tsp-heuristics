@@ -9,14 +9,14 @@ fn main() {
 
     let start: Instant = Instant::now();
 
-    // Twice Around the Tree and Christofides available
-    let cost: f32 = match algorithm {
+    // [WIP] Christofides
+    let (path, cost): (Vec<usize>, f32) = match algorithm {
         Algorithm::Christofides => algorithms::christofides(distances, graph),
         Algorithm::TwiceAroundTheTree => algorithms::twice_around_the_tree(distances, graph),
     };
 
     let duration: Duration = start.elapsed();
 
-    println!("Cost: {}", cost);
-    println!("Duration: {:?}", duration);
+    println!("Cost: {} - Duration: {:?}", cost, duration);
+    println!("Path: {:?}", path);
 }
