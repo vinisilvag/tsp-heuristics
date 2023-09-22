@@ -1,12 +1,10 @@
 use clap::Parser;
 
-use std::fs::File;
-use std::io::prelude::*;
-
-use regex::Regex;
-
 use petgraph::graph::NodeIndex;
 use petgraph::Graph;
+
+use std::path::Path;
+use tspf::TspBuilder;
 
 #[derive(clap::ValueEnum, Clone)]
 pub enum Algorithm {
@@ -30,70 +28,41 @@ struct Arguments {
     path: String,
 }
 
-fn open_file(path: String) -> String {
-    let mut file = File::open(path).expect("Can't open this entry!");
-    let mut contents = String::new();
-
-    file.read_to_string(&mut contents)
-        .expect("Cannot read the file!");
-
-    contents
-}
-
-fn get_entry_data(contents: String) -> (usize, String) {
-    let mut size: usize = 0;
-    let mut points: String = String::new();
-
-    let mut re = Regex::new(r"DIMENSION\s*: (.+)").unwrap();
-
-    if let Some(capture) = re.captures(&contents) {
-        if let Some(dimension) = capture.get(1) {
-            size = dimension.as_str().parse().unwrap();
-        }
-    }
-
-    re = Regex::new(r"NODE_COORD_SECTION\n([\s\S]*?)\nEOF").unwrap();
-    if let Some(capture) = re.captures(&contents) {
-        if let Some(section) = capture.get(1) {
-            points = section.as_str().to_string();
-        }
-    }
-
-    (size, points)
-}
-
-fn euclidean(p0: (f32, f32), p1: (f32, f32)) -> f32 {
-    let x: f32 = p1.0 - p0.0;
-    let y: f32 = p1.1 - p0.1;
+fn euclidean(p0: (f64, f64), p1: (f64, f64)) -> f64 {
+    let x: f64 = p1.0 - p0.0;
+    let y: f64 = p1.1 - p0.1;
 
     ((x * x) + (y * y)).sqrt()
 }
 
 pub fn read_args() -> (
     Algorithm,
-    Vec<Vec<f32>>,
-    Graph<usize, f32, petgraph::Undirected>,
+    String,
+    Vec<Vec<f64>>,
+    Graph<usize, f64, petgraph::Undirected>,
 ) {
     let args = Arguments::parse();
 
-    let contents: String = open_file(args.path);
+    let instance = match TspBuilder::parse_path(Path::new(args.path.as_str())) {
+        Ok(tsp) => tsp,
+        Err(error) => panic!("Error reading the instance: {:?}", error),
+    };
 
-    let (size, points) = get_entry_data(contents);
+    let name = instance.name();
+    let size: usize = instance.dim();
 
     let mut coords = Vec::new();
 
-    for line in points.lines() {
-        let node: Vec<&str> = line.split_whitespace().collect();
-
-        let x: f32 = node[1].parse().unwrap();
-        let y: f32 = node[2].parse().unwrap();
+    for i in instance.node_coords() {
+        let x: f64 = i.1.pos()[0];
+        let y: f64 = i.1.pos()[1];
 
         coords.push((x, y));
     }
 
-    let mut graph = Graph::<usize, f32, petgraph::Undirected>::new_undirected();
+    let mut distances = vec![vec![-1.0f64; size]; size];
 
-    let mut distances = vec![vec![-1.0f32; size]; size];
+    let mut graph = Graph::<usize, f64, petgraph::Undirected>::new_undirected();
 
     // O(V)
     for i in 0..size {
@@ -112,5 +81,5 @@ pub fn read_args() -> (
         }
     }
 
-    (args.algorithm, distances, graph)
+    (args.algorithm, name.to_string(), distances, graph)
 }

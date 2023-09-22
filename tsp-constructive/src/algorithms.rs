@@ -5,9 +5,9 @@ use petgraph::graph::{Graph, NodeIndex, UnGraph};
 use petgraph::visit::Dfs;
 
 pub fn twice_around_the_tree(
-    distances: Vec<Vec<f32>>,
-    graph: Graph<usize, f32, petgraph::Undirected>,
-) -> (Vec<usize>, f32) {
+    distances: Vec<Vec<f64>>,
+    graph: Graph<usize, f64, petgraph::Undirected>,
+) -> (Vec<usize>, f64) {
     let mst = UnGraph::<_, _>::from_elements(min_spanning_tree(&graph));
 
     let mut path: Vec<usize> = Vec::new();
@@ -19,7 +19,7 @@ pub fn twice_around_the_tree(
 
     path.push(0);
 
-    let mut cost: f32 = 0.0;
+    let mut cost: f64 = 0.0;
 
     for i in 0..(path.len() - 1) {
         cost += distances[path[i]][path[i + 1]];
@@ -29,10 +29,14 @@ pub fn twice_around_the_tree(
 }
 
 pub fn christofides(
-    distances: Vec<Vec<f32>>,
-    graph: Graph<usize, f32, petgraph::Undirected>,
-) -> (Vec<usize>, f32) {
+    distances: Vec<Vec<f64>>,
+    graph: Graph<usize, f64, petgraph::Undirected>,
+) -> (Vec<usize>, f64) {
+    println!("{:?}", Dot::new(&graph));
+
     let mut mst = UnGraph::<_, _>::from_elements(min_spanning_tree(&graph));
+
+    println!("{:?}", Dot::new(&mst));
 
     let mut odd_nodes: Vec<NodeIndex> = Vec::new();
 
@@ -45,7 +49,7 @@ pub fn christofides(
         }
     }
 
-    let mut odd_subgraph = Graph::<usize, f32, petgraph::Undirected>::new_undirected();
+    let mut odd_subgraph = Graph::<usize, f64, petgraph::Undirected>::new_undirected();
 
     for i in 0..odd_nodes.len() {
         odd_subgraph.add_node(NodeIndex::index(odd_nodes[i]));
@@ -86,7 +90,7 @@ pub fn christofides(
 
     // path.push(0);
 
-    // let mut cost: f32 = 0.0;
+    // let mut cost: f64 = 0.0;
 
     // for i in 0..(path.len() - 1) {
     //     cost += distances[path[i]][path[i + 1]];
