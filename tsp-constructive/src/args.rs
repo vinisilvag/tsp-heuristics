@@ -25,6 +25,22 @@ fn euclidean(p0: (f64, f64), p1: (f64, f64)) -> f64 {
     ((x * x) + (y * y)).sqrt()
 }
 
+fn pseudo_euclidean(p0: (f64, f64), p1: (f64, f64)) -> f64 {
+    let x: f64 = p1.0 - p0.0;
+    let y: f64 = p1.1 - p0.1;
+
+    let mut distance: f64 = (((x * x) + (y * y)) / 10.0).sqrt();
+    let approx = distance.round();
+
+    if approx < distance {
+        distance = approx + 1.0;
+    } else {
+        distance = approx;
+    }
+
+    distance
+}
+
 pub fn read_args() -> (
     String,
     Vec<Vec<f64>>,
@@ -39,6 +55,7 @@ pub fn read_args() -> (
 
     let name = instance.name();
     let size: usize = instance.dim();
+    let weight_type = instance.weight_kind();
 
     let mut coords = Vec::new();
 
@@ -61,7 +78,11 @@ pub fn read_args() -> (
     // O(E)
     for i in 0..size {
         for j in 0..i {
-            let distance = euclidean(coords[i], coords[j]);
+            let distance: f64 = match weight_type {
+                tspf::WeightKind::Euc2d => euclidean(coords[i], coords[j]),
+                tspf::WeightKind::Att => pseudo_euclidean(coords[i], coords[j]),
+                _ => panic!("Invalid instance"),
+            };
 
             distances[i][j] = distance;
             distances[j][i] = distance;
