@@ -8,5 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.4.3", features = ["derive"] }
 petgraph = "0.6.4"
-regex = "1.9.5"
 tspf = "0.3.1"

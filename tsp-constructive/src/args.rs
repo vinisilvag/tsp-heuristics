@@ -6,23 +6,13 @@ use petgraph::Graph;
 use std::path::Path;
 use tspf::TspBuilder;
 
-#[derive(clap::ValueEnum, Clone)]
-pub enum Algorithm {
-    TwiceAroundTheTree,
-    Christofides,
-}
-
 #[derive(Parser)]
 #[command(
     author = "Vinicius Gomes",
     version,
-    about = "A very simple CLI to execute two constructive heuristics (Twice Around the Tree and Christofides) for instances of the Metric Traveling Salesman Problem"
+    about = "A very simple CLI to execute a constructive heuristics (Twice Around the Tree) for instances of the Metric Traveling Salesman Problem in the TSP-LIB format"
 )]
 struct Arguments {
-    #[arg(short, long)]
-    /// The heuristic algorithm that is going to be executed
-    algorithm: Algorithm,
-
     #[arg(short, long)]
     /// The path for a TSP-LIB instance
     path: String,
@@ -36,7 +26,6 @@ fn euclidean(p0: (f64, f64), p1: (f64, f64)) -> f64 {
 }
 
 pub fn read_args() -> (
-    Algorithm,
     String,
     Vec<Vec<f64>>,
     Graph<usize, f64, petgraph::Undirected>,
@@ -81,5 +70,5 @@ pub fn read_args() -> (
         }
     }
 
-    (args.algorithm, name.to_string(), distances, graph)
+    (name.to_string(), distances, graph)
 }
