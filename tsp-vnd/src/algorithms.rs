@@ -65,15 +65,36 @@ pub fn variable_neighborhood_descent(
             }
         }
 
-        // OR-OPT
-        for u in 1..(n - 2) {
-            for v in (u + 1)..(n - 1) {
-                let (opt_path, opt_cost) = utils::or_opt_swap(&curr, &distances, best, u, v);
+        // 3-OPT
+        for u in 1..(n - 3) {
+            for v in (u + 1)..(n - 2) {
+                for w in (v + 1)..(n - 1) {
+                    let (opt_path, opt_cost) =
+                        utils::three_opt_swap(&curr, &distances, best, u, v, w);
 
-                if best > opt_cost {
-                    curr = opt_path;
-                    best = opt_cost;
-                    is_improving = true;
+                    if best > opt_cost {
+                        curr = opt_path;
+                        best = opt_cost;
+                        is_improving = true;
+                    }
+                }
+            }
+        }
+
+        // 4-OPT
+        for u in 1..(n - 4) {
+            for v in (u + 1)..(n - 3) {
+                for w in (v + 1)..(n - 2) {
+                    for z in (w + 1)..(n - 1) {
+                        let (opt_path, opt_cost) =
+                            utils::four_opt_swap(&curr, &distances, best, u, v, w, z);
+
+                        if best > opt_cost {
+                            curr = opt_path;
+                            best = opt_cost;
+                            is_improving = true;
+                        }
+                    }
                 }
             }
         }
