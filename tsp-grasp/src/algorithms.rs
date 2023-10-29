@@ -3,7 +3,11 @@ use rand::Rng;
 
 use crate::utils;
 
-fn greedy_construction(alfa: f64, n: usize, distances: &Vec<Vec<f64>>) -> (Vec<usize>, f64) {
+fn greedy_randomized_construction(
+    alfa: f64,
+    n: usize,
+    distances: &Vec<Vec<f64>>,
+) -> (Vec<usize>, f64) {
     let mut rng = rand::thread_rng();
 
     let mut solution = Vec::<usize>::new();
@@ -100,7 +104,7 @@ pub fn grasp(
     let mut best_cost: f64 = f64::MAX;
 
     for _ in 0..max_iter {
-        let (initial_path, initial_cost) = greedy_construction(alfa, n, &distances);
+        let (initial_path, initial_cost) = greedy_randomized_construction(alfa, n, &distances);
 
         let (path, cost) = local_search(n, &distances, initial_path, initial_cost);
 

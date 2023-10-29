@@ -9,7 +9,7 @@ fn main() {
 
     let start: Instant = Instant::now();
 
-    let (path, cost): (Vec<usize>, f64) = algorithms::grasp(distances, graph, 0.4, 20);
+    let (path, cost): (Vec<usize>, f64) = algorithms::grasp(distances, graph, 0.4, 80);
 
     let duration: Duration = start.elapsed();
 
